@@ -1,9 +1,9 @@
 import { apiClient } from "./axios";
 
-export const authenticate = async (username, password) => {
+export const authenticate = async (email, password) => {
   try {
     const response = await apiClient.post("/auth/login", {
-      username,
+      email,
       password,
     });
     return response.data;
@@ -12,10 +12,10 @@ export const authenticate = async (username, password) => {
   }
 };
 
-export const register = async (username, password) => {
+export const register = async (email, password) => {
   try {
     const response = await apiClient.post("/auth/register", {
-      username,
+      email,
       password,
     });
     return response.data;

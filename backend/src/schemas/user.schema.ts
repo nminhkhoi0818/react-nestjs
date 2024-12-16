@@ -3,8 +3,8 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class User extends Document {
-  @Prop({ required: true, unique: true })
-  username: string;
+  @Prop({ required: true, unique: true, maxlength: 100 })
+  email: string;
 
   @Prop({ required: true })
   password: string;

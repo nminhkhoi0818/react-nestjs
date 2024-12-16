@@ -7,19 +7,21 @@ import { User } from 'src/schemas/user.schema';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async findByUsername(username: string) {
-    return this.userModel
-      .findOne({
-        username,
-      })
-      .exec();
+  async findOneByEmail(email: string) {
+    return this.userModel.findOne({
+      email,
+    });
   }
 
-  async createUser(username: string, password: string) {
+  async createUser(email: string, password: string) {
     const user = new this.userModel({
-      username,
+      email,
       password,
     });
     return user.save();
+  }
+
+  async getProfile(userId: string) {
+    return await this.userModel.findById(userId).select('-password');
   }
 }

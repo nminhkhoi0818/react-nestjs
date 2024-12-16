@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { sign } from 'jsonwebtoken';
@@ -7,22 +11,27 @@ import { sign } from 'jsonwebtoken';
 export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.usersService.findByUsername(username);
+  async validateUser(email: string, password: string) {
+    const user = await this.usersService.findOneByEmail(email);
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException('Invalid username or password');
+      throw new UnauthorizedException('Invalid email or password');
     }
-    return this.generateToken(user._id.toString(), user.username);
+    return this.generateToken(user._id.toString(), user.email);
   }
 
-  async registerUser(username: string, password: string): Promise<void> {
+  async registerUser(email: string, password: string) {
+    const user = await this.usersService.findOneByEmail(email);
+    if (user) {
+      throw new BadRequestException('User already exists');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    await this.usersService.createUser(username, hashedPassword);
+    await this.usersService.createUser(email, hashedPassword);
+    return { message: 'User created successfully' };
   }
 
-  private generateToken(userId: string, username: string): string {
-    return sign({ userId, username }, process.env.JWT_SECRET, {
+  private generateToken(userId: string, email: string): string {
+    return sign({ userId, email }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
   }
