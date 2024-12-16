@@ -1,15 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TaskList from "../components/TaskList";
 import AddTask from "../components/AddTask";
+import { getTasks } from "../apis/tasks";
 
 const Home = () => {
-  const [tasks, setTasks] = useState([
-    { id: 1, name: "Task 1", status: "Incomplete" },
-    { id: 2, name: "Task 2", status: "Completed" },
-  ]);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const res = await getTasks();
+      if (res) setTasks(res);
+    };
+    fetchTasks();
+  }, []);
 
   return (
-    <div className="container mx-auto px-40 py-20">
+    <div className="container mx-auto px-80 py-20">
       <AddTask setTasks={setTasks} />
       <TaskList tasks={tasks} setTasks={setTasks} />
     </div>

@@ -1,10 +1,13 @@
 import React from "react";
+import { updateStatusTask } from "../apis/tasks";
 
 const TaskList = ({ tasks, setTasks }) => {
-  const handleChangeStatus = (taskId) => {
+  const handleChangeStatus = async (taskId) => {
+    const response = await updateStatusTask(taskId, true);
+
     const updatedTasks = tasks.map((task) => {
-      if (task.id === taskId && task.status === "Incomplete") {
-        return { ...task, status: "Completed" };
+      if (task._id === taskId && !task.isCompleted) {
+        return { ...task, isCompleted: true };
       }
       return task;
     });
@@ -16,17 +19,17 @@ const TaskList = ({ tasks, setTasks }) => {
     <div className="flex flex-col gap-4 py-4">
       {tasks.map((task) => {
         return (
-          <div key={task.id} className="flex gap-4">
+          <div key={task._id} className="flex justify-between gap-4">
+            <span className="text-lg ">{task.name}</span>
             <button
-              onClick={() => handleChangeStatus(task.id)}
+              onClick={() => handleChangeStatus(task._id)}
               className="px-2 py-1 text-white rounded"
               style={{
-                backgroundColor: task.status === "Completed" ? "green" : "red",
+                backgroundColor: task.isCompleted ? "green" : "red",
               }}
             >
-              {task.status}
+              {task.isCompleted ? "Completed" : "Incomplete"}
             </button>
-            <span className="text-lg ">{task.name}</span>
           </div>
         );
       })}
