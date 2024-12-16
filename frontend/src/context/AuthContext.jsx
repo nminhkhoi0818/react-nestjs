@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authenticate } from "../apis/auth";
+import { getProfile } from "../apis/user";
 
 const AuthContext = createContext();
 
@@ -9,12 +10,23 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    setIsAuthenticated(!!token);
-    setLoading(false);
+    const fetchUserProfile = async () => {
+      try {
+        const response = await getProfile();
+        setUser(response);
+        setIsAuthenticated(true);
+      } catch (error) {
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
   }, []);
 
   const login = async (email, password) => {
