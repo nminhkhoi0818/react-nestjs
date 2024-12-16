@@ -5,10 +5,12 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class TasksService {
-  constructor(@InjectModel(Task.name) private taskModel: Model<TaskDocument>) {}
+  constructor(
+    @InjectModel(Task.name) private readonly taskModel: Model<TaskDocument>,
+  ) {}
 
   async createTask(name: string): Promise<Task> {
-    const newTask = new this.taskModel({ name, status: false });
+    const newTask = new this.taskModel({ name, isCompleted: false });
     return newTask.save();
   }
 
@@ -16,7 +18,7 @@ export class TasksService {
     return this.taskModel.find().exec();
   }
 
-  async updateTaskStatus(id: string, status: string): Promise<Task> {
-    return this.taskModel.findByIdAndUpdate(id, { status }).exec();
+  async updateTaskStatus(id: string, isCompleted: boolean): Promise<Task> {
+    return this.taskModel.findByIdAndUpdate(id, { isCompleted }).exec();
   }
 }

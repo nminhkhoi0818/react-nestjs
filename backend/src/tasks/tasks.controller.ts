@@ -13,7 +13,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @Controller('tasks')
 @UseGuards(AuthGuard)
 export class TasksController {
-  constructor(private tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) {}
 
   @Post()
   createTask(@Body('name') name: string) {
@@ -25,8 +25,11 @@ export class TasksController {
     return this.tasksService.getTasks();
   }
 
-  @Patch(':id/status')
-  updateTaskStatus(@Body('status') status: string, @Param('id') id: string) {
-    return this.tasksService.updateTaskStatus(id, status);
+  @Patch(':id')
+  updateTaskStatus(
+    @Body('isCompleted') isCompleted: boolean,
+    @Param('id') id: string,
+  ) {
+    return this.tasksService.updateTaskStatus(id, isCompleted);
   }
 }
