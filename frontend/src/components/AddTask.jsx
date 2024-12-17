@@ -1,20 +1,15 @@
 import React, { useState } from "react";
-import { createTask } from "../apis/tasks";
+import { useTask } from "../context/TaskContext";
 
-const AddTask = ({ setTasks }) => {
+const AddTask = () => {
   const [task, setTask] = useState("");
+  const { addTask } = useTask();
 
   const handleAddTask = async () => {
     if (task === "") {
       return;
     }
-
-    const response = await createTask(task);
-
-    if (response) {
-      setTasks((prev) => [...prev, response]);
-    }
-
+    addTask(task);
     setTask("");
   };
 
