@@ -1,10 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { createTask, getTasks, updateStatusTask } from "../apis/tasks";
+import { useAuth } from "./AuthContext";
 
 const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -12,7 +14,7 @@ export const TaskProvider = ({ children }) => {
       if (res) setTasks(res);
     };
     fetchTasks();
-  }, []);
+  }, [isAuthenticated]);
 
   const addTask = async (name) => {
     if (!name) return;

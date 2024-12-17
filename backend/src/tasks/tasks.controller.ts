@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
@@ -21,8 +22,8 @@ export class TasksController {
   }
 
   @Get()
-  getTasks() {
-    return this.tasksService.getTasks();
+  getTasks(@Query('search') search: string) {
+    return this.tasksService.getTasks(search);
   }
 
   @Patch(':id')

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Task, TaskDocument } from '../schemas/task.schema';
+import { Task } from '../schemas/task.schema';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class TasksService {
   constructor(
-    @InjectModel(Task.name) private readonly taskModel: Model<TaskDocument>,
+    @InjectModel(Task.name) private readonly taskModel: Model<Task>,
   ) {}
 
   async createTask(name: string): Promise<Task> {
@@ -14,8 +14,14 @@ export class TasksService {
     return newTask.save();
   }
 
-  async getTasks(): Promise<Task[]> {
-    return this.taskModel.find().exec();
+  async getTasks(task: string): Promise<Task[]> {
+    if (task) {
+      return await this.taskModel.find({
+        name: { $regex: task, $options: 'i' },
+      });
+    }
+
+    return await this.taskModel.find();
   }
 
   async updateTaskStatus(id: string, isCompleted: boolean): Promise<Task> {
